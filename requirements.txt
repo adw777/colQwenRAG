@@ -1,0 +1,17 @@
+colpali_engine>=0.3.1
+datasets
+huggingface_hub[hf_transfer]
+qdrant-client
+transformers>=4.45.0
+stamina
+rich
+torch
+numpy
+tqdm
+Pillow
+python-dotenv
+# data uplaod to hf
+requests 
+PyMuPDF
+datasets 
+huggingface-hub
