@@ -28,7 +28,7 @@ collection_name = "testColPali"
 model = ColQwen2.from_pretrained(
     "vidore/colqwen2-v0.1",
     torch_dtype=torch.bfloat16,
-    device_map="cuda:0",  # or "mps" if on Apple Silicon
+    device_map="cuda:0",  
 )
 processor = ColQwen2Processor.from_pretrained("vidore/colqwen2-v0.1")
 
