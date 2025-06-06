@@ -7,7 +7,6 @@ from tqdm import tqdm
 from datasets import load_dataset
 import stamina
 from colpali_engine.models import ColPali, ColPaliProcessor, ColQwen2, ColQwen2Processor
-# from colpali_engine.models import ColQwen2, ColQwen2Processor
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -16,7 +15,6 @@ load_dotenv()
 os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "1"
 
 # Set up Qdrant client
-# Replace with your own Qdrant URL and API key
 qdrant_client = QdrantClient(
     url=os.getenv("QDRANT_URL"),
     api_key=os.getenv("QDRANT_API_KEY"),
@@ -26,49 +24,36 @@ qdrant_client = QdrantClient(
     timeout=60,
 )
 
-# Alternatively, use in-memory instance for testing
-# qdrant_client = QdrantClient(":memory:")
-
-# Create Qdrant collection with binary quantization
+# Create Qdrant collection with binary quantization - run it once
 collection_name = "testColPali"
-# qdrant_client.create_collection(
-#     collection_name=collection_name,
-#     on_disk_payload=True,  # store the payload on disk
-#     vectors_config=models.VectorParams(
-#         size=128,
-#         distance=models.Distance.COSINE,
-#         on_disk=True,  # move original vectors to disk
-#         multivector_config=models.MultiVectorConfig(
-#             comparator=models.MultiVectorComparator.MAX_SIM
-#         ),
-#         quantization_config=models.BinaryQuantization(
-#             binary=models.BinaryQuantizationConfig(
-#                 always_ram=True  # keep only quantized vectors in RAM
-#             ),
-#         ),
-#     ),
-# )
+qdrant_client.create_collection(
+    collection_name=collection_name,
+    on_disk_payload=True,  # store the payload on disk
+    vectors_config=models.VectorParams(
+        size=128,
+        distance=models.Distance.COSINE,
+        on_disk=True,  # move original vectors to disk
+        multivector_config=models.MultiVectorConfig(
+            comparator=models.MultiVectorComparator.MAX_SIM
+        ),
+        quantization_config=models.BinaryQuantization(
+            binary=models.BinaryQuantizationConfig(
+                always_ram=True
+            ),
+        ),
+    ),
+)
 
-# Initialize ColPali model and processor
-# model_name = "vidore/colpaligemma-3b-pt-448-base" # vidore/colpaligemma-3b-pt-448-base
-# colpali_model = ColPali.from_pretrained(
-#     model_name,
-#     torch_dtype=torch.bfloat16,
-#     device_map="cuda:0",  # Use "cuda:0" for GPU, "cpu" for CPU, or "mps" for Apple Silicon
-# )
-# colpali_processor = ColPaliProcessor.from_pretrained(
-#     "vidore/colpaligemma-3b-pt-448-base"
-# )
-
+# Initialize model and processor
 model = ColQwen2.from_pretrained(
     "vidore/colqwen2-v0.1",
     torch_dtype=torch.bfloat16,
-    device_map="cuda:0",  # or "mps" if on Apple Silicon
+    device_map="cuda:0",  
 )
 processor = ColQwen2Processor.from_pretrained("vidore/colqwen2-v0.1")
 
 # Load the dataset
-dataset = load_dataset("axondendriteplus/Legal-AI-K-Hub", split="train") #axondendriteplus/LightRAG-DAPO-ScalingLaws
+dataset = load_dataset("axondendriteplus/Legal-AI-K-Hub", split="train") 
 
 # Define retry mechanism for upsert operations
 # @stamina.retry(on=Exception, attempts=3)
@@ -109,10 +94,7 @@ with tqdm(total=len(dataset), desc="Indexing Progress") as pbar:
             points.append(
                 models.PointStruct(
                     id=i + j,  # we just use the index as the ID
-                    vector=multivector,  # This is now a list of vectors
-                    # payload={
-                    #     "source": "internet archive"
-                    # },  # can also add other metadata/data
+                    vector=multivector  # This is now a list of vectors
                 )
             )
 
@@ -128,6 +110,7 @@ with tqdm(total=len(dataset), desc="Indexing Progress") as pbar:
 
 print("Indexing complete!")
 
+# optional
 # Update collection settings
 # qdrant_client.update_collection(
 #     collection_name=collection_name,

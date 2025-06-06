@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from query_response import search_documents
+from query_with_response import search_documents
 import logging
 
 # Configure basic logging

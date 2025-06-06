@@ -31,11 +31,11 @@ collection_name = "testColPali"
 model = ColQwen2.from_pretrained(
     "vidore/colqwen2-v0.1",
     torch_dtype=torch.bfloat16,
-    device_map="cuda:0",  # or "mps" if on Apple Silicon
+    device_map="cuda:0"
 )
 processor = ColQwen2Processor.from_pretrained("vidore/colqwen2-v0.1")
 
-# Load the dataset (if you want to display results)
+# Load the dataset
 dataset = load_dataset("axondendriteplus/Legal-AI-K-Hub", split="train")
 
 def extract_text_from_images(images):
@@ -90,10 +90,8 @@ def search_documents(query_text, limit=10):
     """
     Search for documents using a text query and process results with AI
     """
-    # ... existing search_documents code ...
     search_result, elapsed_time = perform_search(query_text, limit)
     
-    # Get images and extract text
     images = []
     for point in search_result.points[:limit]:
         image_data = dataset[point.id]["image"]
@@ -106,7 +104,6 @@ def search_documents(query_text, limit=10):
     # Extract text from images
     extracted_text = extract_text_from_images(images)
     
-    # Get AI response
     ai_response = get_ai_response(query_text, extracted_text)
     
     return {

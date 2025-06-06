@@ -224,7 +224,6 @@ def main():
                         help='URL of the image OCR API')
     
     args = parser.parse_args()
-    
     # Create the document parsing tool
     doc_parser = DocumentParsingTool()
     
