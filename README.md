@@ -46,7 +46,7 @@ HF_HUB_ENABLE_HF_TRANSFER=1
 
 ```bash
 # Clone repository
-git clone <repository_url>
+git clone https://github.com/adw777/colQwenRAG<repository_url>
 cd colpaliRAG
 
 # Install PyTorch with CUDA support (if CUDA available)
